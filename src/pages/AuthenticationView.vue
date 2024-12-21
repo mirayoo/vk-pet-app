@@ -2,10 +2,10 @@
 import BaseLayout from '@components/layouts/BaseLayout.vue'
 import BaseButton from '@components/common/BaseButton.vue'
 import BaseIcon from '@components/common/BaseIcon.vue'
-import VKAdapter from '@/api/vk/vkAdapter'
+import VkOpenApiController from '@/api/vk/vkOpenApiController'
 
 function signIn() {
-  VKAdapter.auth()
+  VkOpenApiController.auth()
 }
 </script>
 

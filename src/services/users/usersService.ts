@@ -1,4 +1,4 @@
-import VKAdapter from '@/api/vk/vkAdapter'
+import VkOpenApiController from '@/api/vk/vkOpenApiController'
 import { UsersSearchResponse } from '@/types/users/response'
 import { UsersSearchParams } from '@/types/users'
 
@@ -11,6 +11,6 @@ export class UsersService {
       fields: ['photo_100', 'friend_status', 'common_count'],
     }
 
-    return VKAdapter.fetch<UsersSearchResponse>('users.search', searchParams)
+    return VkOpenApiController.fetch<UsersSearchResponse>('users.search', searchParams)
   }
 }

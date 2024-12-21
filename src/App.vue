@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onBeforeMount } from 'vue'
-import VKAdapter from '@/api/vk/vkAdapter'
+import AppService from '@/services/appService'
 
 onBeforeMount(() => {
-  VKAdapter.init()
+  AppService.initVkOpenApi()
 })
 </script>
 

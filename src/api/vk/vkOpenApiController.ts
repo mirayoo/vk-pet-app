@@ -1,7 +1,7 @@
 import { VERSION } from '@/constants/vk'
-import { FRIENDS, WALL } from '@/constants/vk/permissions';
+import { FRIENDS, WALL } from '@/constants/vk/permissions'
 
-export default class VKAdapter {
+export default class VkOpenApiController {
   static init() {
     const apiId = Number(import.meta.env.VITE_VK_APP_ID)
 
@@ -15,29 +15,33 @@ export default class VKAdapter {
   }
 
   static async getLoginStatus() {
-    return sendRequest<vk.OpenAPI.Auth.LoginStatus>(VK.Auth.getLoginStatus)
-      .then(response => response.status)
+    return sendRequest<vk.OpenAPI.Auth.LoginStatus>(VK.Auth.getLoginStatus).then((response) => response.status)
   }
 
   static async fetch<T>(endpoint: string, params: unknown): Promise<T> {
-    return sendRequest<T>((cb) => VK.Api.call(
-      endpoint,
-      {
-      ...params,
-      v: VERSION
-    }, cb))
-      .then(data => {
+    return sendRequest<T>((cb) =>
+      VK.Api.call(
+        endpoint,
+        {
+          ...params,
+          v: VERSION,
+        },
+        cb,
+      ),
+    )
+      .then((data) => {
         if (data.response) return data.response
-      }).catch(error => {
+      })
+      .catch((error) => {
         throw new Error(error)
       })
   }
 }
 
 async function sendRequest<T>(fn: any): Promise<T> {
-  return new Promise((resolve)  => {
+  return new Promise((resolve) => {
     fn(resolve)
-  }).then(response => {
+  }).then((response) => {
     return response
   })
 }
