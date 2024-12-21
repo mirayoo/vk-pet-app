@@ -1,13 +1,13 @@
 <script setup lang="ts">
 // Plugins
-import { debounce } from 'lodash'
+import { debounce } from '@/utils/helpers'
 
 defineProps<{ placeholder?: string }>()
 const emit = defineEmits(['search'])
 
 const value = defineModel<string>()
 
-const debounceInput = debounce((value: string) => {
+const debounceInput = debounce((value) => {
   emit('search', value)
 }, 500)
 </script>
