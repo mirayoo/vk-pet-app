@@ -1,20 +1,12 @@
 <script setup lang="ts">
-defineProps<{
-  layoutClass?: string
-  layoutWrapperClass?: string
-  width?: string
-}>()
+import BaseSidebar from '@components/layouts/BaseSidebar.vue'
 </script>
 
 <template>
-  <div
-    class="base-layout bg-gray-100 p-6 w-full h-full flex justify-center items-center"
-    :class="[layoutWrapperClass]"
-  >
-    <div
-      class="base-layout__card block p-6 h-full bg-white border border-gray-200 rounded-lg shadow overflow-hidden overflow-y-auto"
-      :class="[layoutClass, width ? width : 'w-full']"
-    >
+  <div class="base-layout w-full h-full flex overflow-hidden bg-gray-100">
+    <BaseSidebar class="flex-none" />
+    <div class="base-layout__main p-6 w-full flex flex-col gap-6 content-start justify-start">
+      <div class="header">Hello name 👋🏼,</div>
       <slot />
     </div>
   </div>
