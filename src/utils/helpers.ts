@@ -1,6 +1,6 @@
-type Function = (...args: any[]) => any
+import { FunctionType } from '@/types/common'
 
-export function debounce<T extends Function>(fn: T, wait: number): ReturnType<T> {
+export function debounce<T extends FunctionType<any>>(fn: T, wait: number = 300): ReturnType<T> {
   let timeout: ReturnType<typeof setTimeout>
 
   return function (...args: any[]) {

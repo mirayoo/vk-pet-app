@@ -12,7 +12,6 @@ import { S, XL } from '@/constants/common/button'
 const usersStore = useUsersStore()
 
 const inputValue = ref<string>('')
-const showOptions = computed(() => !!inputValue.value.length)
 const users = computed(() => usersStore.usersInfo)
 const usersSelected = computed(() => usersStore.usersSelectedInfo)
 
@@ -35,7 +34,6 @@ function removeUser(id: string) {
   <BaseLayout layout-class="flex flex-col justify-start gap-6">
     <InputSearch
       v-model="inputValue"
-      :show-options="showOptions"
       :search-options="users"
       @search="getUsers()"
       @add-option="addUser($event)"

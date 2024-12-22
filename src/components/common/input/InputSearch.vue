@@ -1,33 +1,39 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 //  Components
 import BaseInput from '@components/common/input/BaseInput.vue'
 import BaseIcon from '@components/common/BaseIcon.vue'
 import BaseOptions from '@components/common/BaseOptions.vue'
 
-// Plugins
-import { debounce } from 'lodash'
-
 // Types
 import { OptionProps } from '@/types/common/search'
 
-withDefaults(
+// Composables
+import useFireWindowEvent from '@/composables/global/useFireWindowEvent'
+const props = withDefaults(
   defineProps<{
-    showOptions: boolean
     searchOptions: OptionProps[]
   }>(),
   {
-    showOptions: false,
     searchOptions: () => [],
   },
 )
-
 const isInputActive = ref(false)
 
-const updateOptionsShowState = debounce((show) => {
+const searchOptionsSize = computed(() => {
+  return !!props.searchOptions.length
+})
+const showOptions = computed(() => {
+  return searchOptionsSize.value && isInputActive.value
+})
+
+function updateOptionsShowState(show = false) {
   isInputActive.value = show
-}, 300)
+}
+
+const restrictedClassList = ['base-options__option', 'input-search']
+useFireWindowEvent('click', restrictedClassList, () => updateOptionsShowState(false, 1, 2, 3))
 </script>
 
 <template>
@@ -40,12 +46,12 @@ const updateOptionsShowState = debounce((show) => {
     <BaseInput
       v-bind="$attrs"
       class="border-primary"
+      input-class="input-search"
       placeholder="Enter user name or id"
       @focus="updateOptionsShowState(true)"
-      @blur="updateOptionsShowState(false)"
     >
       <BaseIcon
-        class="absolute right-0 top-0 text-primary"
+        class="search-icon absolute right-0 top-0 text-primary pointer-events-none"
         name="searchIcon"
         icon-width="16"
         icon-height="16"
@@ -58,7 +64,8 @@ const updateOptionsShowState = debounce((show) => {
       Submit
     </button>
     <BaseOptions
-      v-show="isInputActive && showOptions"
+      v-show="showOptions"
+      allow-divider
       :options="searchOptions"
       v-bind="$attrs"
     />
