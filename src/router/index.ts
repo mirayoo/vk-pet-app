@@ -1,6 +1,8 @@
 import { createWebHistory, createRouter } from 'vue-router'
 import AppService from '@/services/appService'
 
+const baseUrl = import.meta.env.BASE_URL
+
 const routes = [
   { path: '/', name: 'Profile', component: () => import('@/pages/MainPageView.vue') },
   { path: '/auth', name: 'SignIn', component: () => import('@/pages/AuthenticationView.vue') },
@@ -9,7 +11,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(baseUrl),
   routes,
 })
 

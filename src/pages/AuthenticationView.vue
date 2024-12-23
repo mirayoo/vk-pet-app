@@ -1,12 +1,25 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+import { onMounted, ref } from 'vue'
+
 import BaseLayout from '@components/layouts/BaseLayout.vue'
 import BaseButton from '@components/common/BaseButton.vue'
 import BaseIcon from '@components/common/BaseIcon.vue'
 import VkOpenApiController from '@/api/vk/vkOpenApiController'
 
+const router = ref(null)
+
 function signIn() {
-  VkOpenApiController.auth()
+  VkOpenApiController.auth().then((response) => {
+    if (router.value && response?.status === 'connected') {
+      router.value.push('/')
+    }
+  })
 }
+
+onMounted(() => {
+  router.value = useRouter()
+})
 </script>
 
 <template>
