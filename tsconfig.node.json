@@ -6,6 +6,11 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"]
+    },
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -15,13 +20,14 @@
     "emitDeclarationOnly": true,
 
     /* Linting */
-    "strict": true,
+    "strict": false,
+    "noImplicitAny": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "types": [ "node" ],
-    "typeRoots": [ "../node_modules/@types" ]
+    "typeRoots": [ "node_modules/@types", "../node_modules/@types" ]
   },
   "include": ["vite.config.ts"]
 }

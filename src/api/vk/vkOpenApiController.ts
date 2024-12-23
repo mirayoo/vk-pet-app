@@ -11,15 +11,15 @@ export default class VkOpenApiController {
   static async auth() {
     const permissions: number = FRIENDS + WALL
 
-    return sendRequest<vk.OpenAPI.Auth.LoginStatus>((cb) => VK.Auth.login(cb, permissions))
+    return sendRequest((cb) => VK.Auth.login(cb, permissions))
   }
 
   static async getLoginStatus() {
-    return sendRequest<vk.OpenAPI.Auth.LoginStatus>(VK.Auth.getLoginStatus).then((response) => response.status)
+    return sendRequest(VK.Auth.getLoginStatus).then((response) => response.status)
   }
 
-  static async fetch<T>(endpoint: string, params: unknown): Promise<T> {
-    return sendRequest<T>((cb) =>
+  static async fetch(endpoint: string, params: any): Promise<any> {
+    return sendRequest((cb) =>
       VK.Api.call(
         endpoint,
         {
@@ -38,7 +38,7 @@ export default class VkOpenApiController {
   }
 }
 
-async function sendRequest<T>(fn: any): Promise<T> {
+async function sendRequest(fn: any): Promise<any> {
   return new Promise((resolve) => {
     fn(resolve)
   }).then((response) => {

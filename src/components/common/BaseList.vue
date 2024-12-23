@@ -10,6 +10,7 @@ defineProps<{
   <DataView
     :value="items"
     paginator
+    data-key="users"
     class="flex flex-col"
     :pt="{
       content: {

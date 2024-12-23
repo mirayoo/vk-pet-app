@@ -19,4 +19,5 @@ export interface User {
   can_access_closed: boolean
   common_count: number
   photo_100: string
+  friendsList?: any[]
 }

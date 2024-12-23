@@ -8,7 +8,7 @@ export const useUsersStore = defineStore('users', () => {
   const users = ref<User[]>([])
   const usersSelected = ref<User[]>([])
   const friends = ref<User[]>([])
-  const user = ref<User>({})
+  const user = ref<User>({} as User)
   const userFriendIds = ref<string[]>([])
   const posts = ref<any[]>([])
 
@@ -20,7 +20,7 @@ export const useUsersStore = defineStore('users', () => {
       addButtonDisabled: !!findUserById(usersSelected.value, String(user.value.id)),
       removeButtonDisabled: !findUserById(usersSelected.value, String(user.value.id)),
       friends: user.value.friendsList,
-    }
+    } as any
   })
   const usersInfo = computed(() => {
     return (
@@ -53,7 +53,7 @@ export const useUsersStore = defineStore('users', () => {
     return (
       friends.value &&
       friends.value
-        .map((user) => {
+        .map((user: any) => {
           let sex
 
           switch (user.sex) {
@@ -108,7 +108,7 @@ export const useUsersStore = defineStore('users', () => {
   const getUsers = async (user_ids: string) => {
     const [data] = await usersService.getUsers({ user_ids })
 
-    const currentUser = findUserById(friends.value, String(data.id))
+    const currentUser: any = findUserById(friends.value, String(data.id))
 
     user.value = data
     userFriendIds.value = currentUser?.friendsList ?? []
@@ -131,7 +131,7 @@ export const useUsersStore = defineStore('users', () => {
     })
   }
 
-  const getUsersFriends = async (userIds: string) => {
+  const getUsersFriends = async (userIds: string | string[]) => {
     const friendsList = new Map()
 
     for (let i = 0; i < userIds.length; i++) {

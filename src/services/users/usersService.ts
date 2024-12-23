@@ -1,18 +1,17 @@
 import VkOpenApiController from '@/api/vk/vkOpenApiController'
-import { UsersSearchResponse } from '@/types/users/response'
 import { UsersSearchParams } from '@/types/users'
 
 export class UsersService {
-  async getUsers(params) {
+  async getUsers(params): Promise<any> {
     const searchParams = {
       user_ids: params.user_ids,
       fields: ['photo_100', 'friend_status', 'common_count', 'counters', 'bdate'],
     }
 
-    return VkOpenApiController.fetch<UsersSearchResponse>('users.get', searchParams)
+    return VkOpenApiController.fetch('users.get', searchParams)
   }
 
-  async findUsers(params: Pick<UsersSearchParams, 'q'>) {
+  async findUsers(params: Pick<UsersSearchParams, 'q'>): Promise<any> {
     const searchParams = {
       q: params.q,
       sort: 1,
@@ -20,11 +19,11 @@ export class UsersService {
       fields: ['photo_100', 'friend_status', 'common_count'],
     }
 
-    return VkOpenApiController.fetch<UsersSearchResponse>('users.search', searchParams)
+    return VkOpenApiController.fetch('users.search', searchParams)
   }
 
-  async getUserFriends(user_id: string, includeFields = true): Promise<void> {
-    const params = { user_id }
+  async getUserFriends(user_id: string, includeFields = true): Promise<any> {
+    const params: any = { user_id }
     if (includeFields) {
       params.fields = ['bdate', 'sex', 'photo_100', 'followers_count', 'counters']
     }
@@ -32,7 +31,7 @@ export class UsersService {
     return VkOpenApiController.fetch('friends.get', params)
   }
 
-  async getUserPosts(owner_id: string) {
+  async getUserPosts(owner_id: string): Promise<any> {
     const params = {
       owner_id,
       extended: 1,

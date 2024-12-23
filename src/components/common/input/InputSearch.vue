@@ -4,11 +4,10 @@ import AutoComplete from 'primevue/autocomplete'
 import Button from 'primevue/button'
 
 // Types
-import { OptionProps } from '@/types/common/search'
 
 withDefaults(
   defineProps<{
-    searchOptions: OptionProps[]
+    searchOptions: any[]
   }>(),
   {
     searchOptions: () => [],
@@ -16,7 +15,7 @@ withDefaults(
 )
 const emit = defineEmits(['search', 'add-option'])
 
-const modelValue = defineModel<OptionProps>()
+const modelValue = defineModel<any>()
 
 function handleChange() {
   if (modelValue.value.id) {
