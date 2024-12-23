@@ -1,17 +1,12 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-
 //  Components
-import BaseInput from '@components/common/input/BaseInput.vue'
-import BaseIcon from '@components/common/BaseIcon.vue'
-import BaseOptions from '@components/common/BaseOptions.vue'
+import AutoComplete from 'primevue/autocomplete'
+import Button from 'primevue/button'
 
 // Types
 import { OptionProps } from '@/types/common/search'
 
-// Composables
-import useFireWindowEvent from '@/composables/global/useFireWindowEvent'
-const props = withDefaults(
+withDefaults(
   defineProps<{
     searchOptions: OptionProps[]
   }>(),
@@ -19,57 +14,46 @@ const props = withDefaults(
     searchOptions: () => [],
   },
 )
-const isInputActive = ref(false)
+const emit = defineEmits(['search', 'add-option'])
 
-const searchOptionsSize = computed(() => {
-  return !!props.searchOptions.length
-})
-const showOptions = computed(() => {
-  return searchOptionsSize.value && isInputActive.value
-})
+const modelValue = defineModel<OptionProps>()
 
-function updateOptionsShowState(show = false) {
-  isInputActive.value = show
+function handleChange() {
+  if (modelValue.value.id) {
+    emit('add-option', modelValue.value.id)
+  }
 }
-
-const restrictedClassList = ['base-options__option', 'input-search']
-useFireWindowEvent('click', restrictedClassList, () => updateOptionsShowState(false, 1, 2, 3))
 </script>
 
 <template>
-  <div class="relative w-full flex justify-start items-start h-auto">
-    <label
-      class="sr-only"
-      for="SiteSearch"
-      >Search
-    </label>
-    <BaseInput
-      v-bind="$attrs"
-      class="border-primary"
-      input-class="input-search"
-      placeholder="Enter user name or id"
-      @focus="updateOptionsShowState(true)"
+  <div class="input-search w-full flex flex-nowrap gap-2">
+    <AutoComplete
+      v-model="modelValue"
+      placeholder="Select user"
+      class="grow"
+      input-class="w-full"
+      :suggestions="searchOptions"
+      option-label="value"
+      @complete="emit('search')"
     >
-      <BaseIcon
-        class="search-icon absolute right-0 top-0 text-primary pointer-events-none"
-        name="searchIcon"
-        icon-width="16"
-        icon-height="16"
-      />
-    </BaseInput>
-    <button
-      class="sr-only"
-      tabindex="-1"
-    >
-      Submit
-    </button>
-    <BaseOptions
-      v-show="showOptions"
-      allow-divider
-      :options="searchOptions"
-      v-bind="$attrs"
+      <template #option="slotProps">
+        <div
+          class="base-list__option w-full flex items-center justify-start rounded-md px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 focus:bg-gray-50"
+        >
+          <span class="w-[40px] h-[40px] inline-flex shadow-md shadow-gray-400/30 rounded-md overflow-hidden mr-4">
+            <img
+              :src="slotProps.option.imageSrc"
+              :alt="`${slotProps.option.value} photo`"
+            />
+          </span>
+          {{ slotProps.option.value }}
+        </div>
+      </template>
+    </AutoComplete>
+    <Button
+      label="Add user"
+      @click="handleChange()"
     />
   </div>
 </template>
-
 <style scoped></style>

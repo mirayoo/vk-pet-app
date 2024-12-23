@@ -2,19 +2,19 @@
 import { computed, ref } from 'vue'
 
 // Components
-import BaseLayout from '@components/layouts/BaseLayout.vue'
 import InputSearch from '@components/common/input/InputSearch.vue'
 import { useUsersStore } from '@/store/users/useUsersStore'
-import BaseList from '@components/common/BaseList.vue'
-import BaseButton from '@components/common/BaseButton.vue'
-import { S, XL } from '@/constants/common/button'
 import BaseCard from '@components/layouts/BaseCard.vue'
+import Button from 'primevue/button'
+import UserList from '@components/common/UserList.vue'
 
 const usersStore = useUsersStore()
 
 const inputValue = ref<string>('')
 const users = computed(() => usersStore.usersInfo)
-const usersSelected = computed(() => usersStore.usersSelectedInfo)
+const usersSelected = computed(() => {
+  return usersStore.usersSelectedInfo
+})
 const friends = computed(() => usersStore.friendsInfo)
 
 async function getUsers() {
@@ -39,54 +39,68 @@ function getUsersFriends() {
 </script>
 
 <template>
-  <BaseLayout>
-    <BaseCard card-class="flex flex-col justify-start gap-6">
-      <InputSearch
-        v-model="inputValue"
-        :search-options="users"
-        @search="getUsers()"
-        @add-option="addUser($event)"
-        @remove-option="removeUser($event)"
-      />
-      <div class="main-list__wrapper max-h-full overflow-hidden flex flex-col gap-6">
-        <div v-show="!usersSelected.length">No users added</div>
-        <div
-          v-show="usersSelected.length"
-          class="main-list"
-        >
-          <BaseList
-            class="max-h-full flex flex-col bg-blue-50 rounded-md"
-            :items="usersSelected"
-            item-class="hover:bg-blue-100"
-          >
-            <template #append="{ item }">
-              <div class="option__buttons flex gap-1 ml-auto mr-0">
-                <BaseButton
-                  button-class="block ml-auto mr-0 rounded-md px-1.5 py-0.5 text-md hover:bg-red-400"
-                  :size="S"
-                  bg-color="bg-red-500"
-                  @click="removeUser(item.id)"
-                >
-                  Remove user
-                </BaseButton>
-              </div>
-            </template>
-          </BaseList>
-
-          <BaseButton
-            button-class="block w-full justify-center text-lg font-medium"
-            :size="XL"
+  <BaseCard>
+    <InputSearch
+      v-model="inputValue"
+      :search-options="users"
+      @search="getUsers()"
+      @add-option="addUser($event)"
+    />
+  </BaseCard>
+  <div class="main-list__wrapper overflow-hidden flex flex-nowrap gap-6">
+    <BaseCard
+      class="grow w-32 overflow-hidden h-full"
+      :pt="{
+        body: { class: 'h-full' },
+        content: { class: 'h-full' },
+      }"
+      card-class="flex flex-col justify-start gap-6"
+    >
+      <div v-show="!usersSelected.length">No users added</div>
+      <UserList
+        v-show="usersSelected.length"
+        :items="usersSelected"
+        @remove-user="removeUser"
+      >
+        <template #append="{ item }">
+          <Button
+            label="Remove user"
+            icon="pi pi-trash"
+            severity="danger"
+            @click="removeUser(item.id)"
+          />
+        </template>
+        <template #footer>
+          <Button
+            class="w-full"
+            label="Generate friends list"
             @click="getUsersFriends()"
-          >
-            Generate friends list
-          </BaseButton>
-        </div>
-      </div>
-      <div class="friends-list">
-        <BaseList :items="friends" />
-      </div>
+          />
+        </template>
+      </UserList>
     </BaseCard>
-  </BaseLayout>
+    <BaseCard
+      class="grow w-64 overflow-hidden h-full"
+      :pt="{
+        body: { class: 'h-full' },
+        content: { class: 'h-full' },
+      }"
+      card-class="flex flex-col justify-start gap-6"
+    >
+      <UserList
+        v-show="friends.length"
+        :items="friends"
+      >
+        <template #append="{ item }">
+          <Button
+            label="Visit profile"
+            as="router-link"
+            :to="`/user/${item.id}`"
+          />
+        </template>
+      </UserList>
+    </BaseCard>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped lang="scss"></style>

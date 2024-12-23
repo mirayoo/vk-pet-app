@@ -3,7 +3,7 @@ import { UsersSearchResponse } from '@/types/users/response'
 import { UsersSearchParams } from '@/types/users'
 
 export class UsersService {
-  async getUsers(params: Pick<UsersSearchParams, 'q'>) {
+  async getUsers(params) {
     const searchParams = {
       user_ids: params.user_ids,
       fields: ['photo_100', 'friend_status', 'common_count', 'counters', 'bdate'],
@@ -30,5 +30,14 @@ export class UsersService {
     }
 
     return VkOpenApiController.fetch('friends.get', params)
+  }
+
+  async getUserPosts(owner_id: string) {
+    const params = {
+      owner_id,
+      extended: 1,
+    }
+
+    return VkOpenApiController.fetch('wall.get', params)
   }
 }

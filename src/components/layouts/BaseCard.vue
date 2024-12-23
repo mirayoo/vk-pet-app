@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Card from 'primevue/card'
+
 defineProps<{
   cardClass?: string
   cardWrapperClass?: string
@@ -7,12 +9,32 @@ defineProps<{
 </script>
 
 <template>
-  <div
-    class="base-card grow block p-4 bg-white border border-gray-200 rounded-lg shadow overflow-hidden"
-    :class="[cardClass, width ? width : 'w-full']"
-  >
-    <slot />
-  </div>
+  <Card>
+    <template
+      v-if="$slots.title"
+      #title
+    >
+      <slot name="title" />
+    </template>
+    <template
+      v-if="$slots.subtitle"
+      #subtitle
+    >
+      <slot name="subtitle" />
+    </template>
+    <template
+      v-if="$slots.default"
+      #content
+    >
+      <slot />
+    </template>
+    <template
+      v-if="$slots.footer"
+      #footer
+    >
+      <slot name="footer" />
+    </template>
+  </Card>
 </template>
 
 <style scoped></style>

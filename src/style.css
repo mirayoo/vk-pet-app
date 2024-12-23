@@ -1,3 +1,5 @@
+@import 'primeicons/primeicons.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,4 +8,15 @@
     --primary: #007bff;
     --gray-100: #f3f4f6;
     --gray-400: #9ca3af;
+}
+
+
+div ::-webkit-scrollbar {
+    width: 6px;
+    background: var(--gray-100);
+}
+
+div ::-webkit-scrollbar-thumb {
+    background: var(--gray-400);
+    border-radius: 6px;
 }
