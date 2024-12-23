@@ -6,7 +6,6 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:vue/vue3-recommended",
-    "plugin:import/recommended",
     "plugin:jsx-a11y/recommended",
     "eslint-config-prettier"
   ],
@@ -14,7 +13,7 @@
   "parserOptions": {
     "parser": "@typescript-eslint/parser"
   },
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "import"],
   "settings": {
     "vue": {
       "version": "detect"
@@ -41,7 +40,7 @@
   },
   "rules": {
     "vue/no-unused-vars": "error",
-    "vue/ multi-word-component-names": "off",
+    "vue/multi-word-component-names": "off",
     "@typescript-eslint/no-explicit-any": "off"
   }
 }
