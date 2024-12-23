@@ -20,10 +20,10 @@ concurrency:
   group: 'pages'
   cancel-in-progress: true
 
-  
+
 #Allow repo secrets
 env:
-  VITE_VK_APP_ID: ${{ secrets.VITE_OPEN_AI_API_KEY  }}
+  VITE_VK_APP_ID: ${{ secrets.VITE_VK_APP_ID  }}
   VITE_VK_APP_URL: ${{ secrets.VITE_VK_APP_URL }}
   VITE_VK_APP_SERVICE_KEY: ${{ secrets.VITE_VK_APP_SERVICE_KEY }}
 
