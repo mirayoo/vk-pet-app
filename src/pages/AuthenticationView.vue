@@ -11,7 +11,7 @@ function signIn() {
 
 <template>
   <BaseLayout
-    layout-class="flex justify-center items-center flex-col gap-6"
+    layout-class="flex justify-center items-center text-center flex-col gap-6"
     width="w-96"
   >
     <img
