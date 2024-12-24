@@ -3,6 +3,7 @@ import BaseList from '@components/common/BaseList.vue'
 
 defineProps<{
   items: any[]
+  rows: number
 }>()
 
 function addBgColor(value) {
@@ -22,7 +23,11 @@ function addBgColor(value) {
 </script>
 
 <template>
-  <BaseList :items="items">
+  <BaseList
+    :items="items"
+    :rows="rows"
+    v-bind="$attrs"
+  >
     <template
       v-if="$slots.header"
       #header
@@ -61,7 +66,8 @@ function addBgColor(value) {
                 style="border-radius: 30px"
               >
                 <div
-                  class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-2"
+                  v-if="item.born"
+                  class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-2 my-3"
                   style="
                     border-radius: 30px;
                     box-shadow:
@@ -69,18 +75,7 @@ function addBgColor(value) {
                       0 1px 2px 0 rgba(0, 0, 0, 0.06);
                   "
                 >
-                  <span
-                    v-show="item.friendsCounter"
-                    class="text-surface-900 font-medium text-sm"
-                  >
-                    {{ item.friendsCounter }}
-                  </span>
-                  <span
-                    v-if="item.born"
-                    class="text-surface-900 font-medium text-sm"
-                  >
-                    Birthday: {{ item.born }}
-                  </span>
+                  <span class="text-surface-900 font-medium text-sm"> Birthday: {{ item.born }} </span>
                 </div>
                 <slot
                   name="append"

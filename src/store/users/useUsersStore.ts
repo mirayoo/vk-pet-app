@@ -8,9 +8,11 @@ export const useUsersStore = defineStore('users', () => {
   const users = ref<User[]>([])
   const usersSelected = ref<User[]>([])
   const friends = ref<User[]>([])
+  const friendsCount = ref<any[]>([])
   const user = ref<User>({} as User)
   const userFriendIds = ref<string[]>([])
   const posts = ref<any[]>([])
+  const loading = ref<boolean>(false)
 
   const userInfo = computed(() => {
     return {
@@ -73,12 +75,14 @@ export const useUsersStore = defineStore('users', () => {
             sex,
             imageSrc: user.photo_100,
             born: user?.bdate,
-            friendsCounter: `${user.friendsList?.length} ${user.friendsList?.length > 1 ? 'friends' : 'friend'}`,
+            friendsCounter: `${user.friends?.length} ${user.friends?.length > 1 ? 'friends' : 'friend'}`,
           }
         })
         .sort((a, b) => a.value.localeCompare(b.value))
     )
   })
+
+  const friendsCountInfo = computed(() => friendsCount.value)
 
   const userFriendsInfo = computed(() => {
     return usersSelectedInfo.value.filter((friend) => {
@@ -131,6 +135,36 @@ export const useUsersStore = defineStore('users', () => {
     })
   }
 
+  const getFriendsCount = async (user_ids: string) => {
+    let i = 0
+    const result = []
+    friendsCount.value = []
+    loading.value = true
+
+    async function getFriendsCountInnerFn() {
+      do {
+        if (!user_ids[i]) break
+
+        const [data] = await usersService.getUsers({
+          user_ids: user_ids[i],
+          fields: ['counters'],
+        })
+        i++
+        result.push(data)
+      } while (i % 3 !== 0 && i < user_ids.length)
+
+      if (i === user_ids.length) {
+        loading.value = false
+        friendsCount.value = result
+
+        return
+      }
+      setTimeout(getFriendsCountInnerFn, 1500)
+    }
+
+    getFriendsCountInnerFn()
+  }
+
   const getUsersFriends = async (userIds: string | string[]) => {
     const friendsList = new Map()
 
@@ -170,6 +204,7 @@ export const useUsersStore = defineStore('users', () => {
   }
 
   return {
+    loading,
     user,
     users,
     usersSelected,
@@ -179,6 +214,7 @@ export const useUsersStore = defineStore('users', () => {
     usersInfo,
     usersSelectedInfo,
     friendsInfo,
+    friendsCountInfo,
     userFriendsInfo,
     postsInfo,
     getUsers,
@@ -187,5 +223,6 @@ export const useUsersStore = defineStore('users', () => {
     removeUser,
     getUsersFriends,
     getUserPosts,
+    getFriendsCount,
   }
 })

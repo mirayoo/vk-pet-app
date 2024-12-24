@@ -3,7 +3,13 @@ import DataView from 'primevue/dataview'
 
 defineProps<{
   items: any[]
+  rows: number
 }>()
+const emit = defineEmits(['change-page'])
+
+function getCurrentPage(e) {
+  emit('change-page', e)
+}
 </script>
 
 <template>
@@ -21,7 +27,8 @@ defineProps<{
       },
       root: { class: 'overflow-hidden h-full' },
     }"
-    :rows="10"
+    :rows="rows"
+    @page="getCurrentPage"
   >
     <template
       v-if="$slots.header"

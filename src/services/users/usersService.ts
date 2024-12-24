@@ -2,10 +2,16 @@ import VkOpenApiController from '@/api/vk/vkOpenApiController'
 import { UsersSearchParams } from '@/types/users'
 
 export class UsersService {
-  async getUsers(params): Promise<any> {
+  async getUsers({
+    user_ids,
+    fields = ['photo_100', 'friend_status', 'common_count', 'counters', 'bdate'],
+  }: {
+    user_ids: string
+    fields: string[]
+  }): Promise<any> {
     const searchParams = {
-      user_ids: params.user_ids,
-      fields: ['photo_100', 'friend_status', 'common_count', 'counters', 'bdate'],
+      user_ids,
+      fields,
     }
 
     return VkOpenApiController.fetch('users.get', searchParams)
