@@ -156,7 +156,7 @@ export const useUsersStore = defineStore('users', () => {
     })
   }
 
-  const getFriendsCount = async (user_ids: string) => {
+  const getFriendsCount = async (user_ids: string[]) => {
     let i = 0
     const result = []
     friendsCount.value = []

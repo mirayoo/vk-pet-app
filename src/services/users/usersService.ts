@@ -6,8 +6,8 @@ export class UsersService {
     user_ids,
     fields = ['photo_100', 'friend_status', 'common_count', 'counters', 'bdate'],
   }: {
-    user_ids: string
-    fields: string[]
+    user_ids: string | string[]
+    fields?: string[]
   }): Promise<any> {
     const searchParams = {
       user_ids,
