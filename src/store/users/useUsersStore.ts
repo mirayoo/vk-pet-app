@@ -8,9 +8,12 @@ export const useUsersStore = defineStore('users', () => {
   const users = ref<User[]>([])
   const usersSelected = ref<User[]>([])
   const friends = ref<User[]>([])
+  const friendsCount = ref<any[]>([])
   const user = ref<User>({} as User)
   const userFriendIds = ref<string[]>([])
   const posts = ref<any[]>([])
+  const loading = ref<boolean>(false)
+  const postsLoading = ref<boolean>(false)
 
   const userInfo = computed(() => {
     return {
@@ -73,12 +76,14 @@ export const useUsersStore = defineStore('users', () => {
             sex,
             imageSrc: user.photo_100,
             born: user?.bdate,
-            friendsCounter: `${user.friendsList?.length} ${user.friendsList?.length > 1 ? 'friends' : 'friend'}`,
+            friendsCounter: `${user.friends?.length} ${user.friends?.length > 1 ? 'friends' : 'friend'}`,
           }
         })
         .sort((a, b) => a.value.localeCompare(b.value))
     )
   })
+
+  const friendsCountInfo = computed(() => friendsCount.value)
 
   const userFriendsInfo = computed(() => {
     return usersSelectedInfo.value.filter((friend) => {
@@ -87,7 +92,25 @@ export const useUsersStore = defineStore('users', () => {
   })
 
   const postsInfo = computed(() => {
-    return posts.value
+    const copyHistoryPosts = posts.value
+      .filter((post) => post.copy_history)
+      .map((post) => post.copy_history[0])
+      .map((post) => {
+        const image =
+          !post.attachments || !post.attachments.length || post.attachments[0].type !== 'photo'
+            ? ''
+            : post.attachments[0].photo?.sizes[post.attachments[0].photo.sizes.length - 1].url
+
+        return {
+          id: post.id,
+          date: post.date,
+          image,
+          text: post.text,
+        }
+      })
+
+    const regularPosts = posts.value
+      .filter((post) => !post.copy_history)
       .map((post) => {
         const image =
           !post.attachments.length || post.attachments[0].type !== 'photo'
@@ -102,7 +125,9 @@ export const useUsersStore = defineStore('users', () => {
         }
       })
       .filter((post) => post.text.length || post.image.length)
-      .sort((a, b) => a.date - b.date)
+
+    const result = [...regularPosts, ...copyHistoryPosts]
+    return result.sort((a, b) => b.date - a.date)
   })
 
   const getUsers = async (user_ids: string) => {
@@ -129,6 +154,36 @@ export const useUsersStore = defineStore('users', () => {
     usersSelected.value = usersSelected.value.filter((user) => {
       return String(user.id) !== id
     })
+  }
+
+  const getFriendsCount = async (user_ids: string[]) => {
+    let i = 0
+    const result = []
+    friendsCount.value = []
+    loading.value = true
+
+    async function getFriendsCountInnerFn() {
+      do {
+        if (!user_ids[i]) break
+
+        const [data] = await usersService.getUsers({
+          user_ids: user_ids[i],
+          fields: ['counters'],
+        })
+        i++
+        result.push(data)
+      } while (i % 3 !== 0 && i < user_ids.length)
+
+      if (i === user_ids.length) {
+        loading.value = false
+        friendsCount.value = result
+
+        return
+      }
+      setTimeout(getFriendsCountInnerFn, 1500)
+    }
+
+    getFriendsCountInnerFn()
   }
 
   const getUsersFriends = async (userIds: string | string[]) => {
@@ -160,9 +215,32 @@ export const useUsersStore = defineStore('users', () => {
   }
 
   const getUserPosts = async (owner_id) => {
-    const data = await usersService.getUserPosts(owner_id)
+    posts.value = []
+    postsLoading.value = true
 
-    posts.value = data?.items ?? []
+    const limit = 100
+    const result = []
+    let postsCount = 0
+    let i = 0
+
+    async function getPostsInnerFn() {
+      do {
+        const data = await usersService.getUserPosts(owner_id, limit, i)
+        postsCount = data?.count
+        i += 100
+        result.push(...data.items)
+      } while (i < postsCount)
+
+      if (i >= postsCount) {
+        postsLoading.value = false
+        posts.value = result
+
+        return
+      }
+      setTimeout(getPostsInnerFn, 1500)
+    }
+
+    await getPostsInnerFn()
   }
 
   function findUserById(users: User[], id: string): User {
@@ -170,6 +248,8 @@ export const useUsersStore = defineStore('users', () => {
   }
 
   return {
+    loading,
+    postsLoading,
     user,
     users,
     usersSelected,
@@ -179,6 +259,7 @@ export const useUsersStore = defineStore('users', () => {
     usersInfo,
     usersSelectedInfo,
     friendsInfo,
+    friendsCountInfo,
     userFriendsInfo,
     postsInfo,
     getUsers,
@@ -187,5 +268,6 @@ export const useUsersStore = defineStore('users', () => {
     removeUser,
     getUsersFriends,
     getUserPosts,
+    getFriendsCount,
   }
 })

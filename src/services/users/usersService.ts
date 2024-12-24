@@ -2,10 +2,16 @@ import VkOpenApiController from '@/api/vk/vkOpenApiController'
 import { UsersSearchParams } from '@/types/users'
 
 export class UsersService {
-  async getUsers(params): Promise<any> {
+  async getUsers({
+    user_ids,
+    fields = ['photo_100', 'friend_status', 'common_count', 'counters', 'bdate'],
+  }: {
+    user_ids: string | string[]
+    fields?: string[]
+  }): Promise<any> {
     const searchParams = {
-      user_ids: params.user_ids,
-      fields: ['photo_100', 'friend_status', 'common_count', 'counters', 'bdate'],
+      user_ids,
+      fields,
     }
 
     return VkOpenApiController.fetch('users.get', searchParams)
@@ -31,10 +37,12 @@ export class UsersService {
     return VkOpenApiController.fetch('friends.get', params)
   }
 
-  async getUserPosts(owner_id: string): Promise<any> {
+  async getUserPosts(owner_id: string, limit: number = 100, offset: number = 0): Promise<any> {
     const params = {
       owner_id,
       extended: 1,
+      count: limit,
+      offset,
     }
 
     return VkOpenApiController.fetch('wall.get', params)
