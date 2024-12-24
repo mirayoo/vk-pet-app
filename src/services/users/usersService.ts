@@ -37,10 +37,12 @@ export class UsersService {
     return VkOpenApiController.fetch('friends.get', params)
   }
 
-  async getUserPosts(owner_id: string): Promise<any> {
+  async getUserPosts(owner_id: string, limit: number = 100, offset: number = 0): Promise<any> {
     const params = {
       owner_id,
       extended: 1,
+      count: limit,
+      offset,
     }
 
     return VkOpenApiController.fetch('wall.get', params)

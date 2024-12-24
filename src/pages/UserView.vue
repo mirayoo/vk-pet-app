@@ -11,9 +11,8 @@ const props = defineProps<{
 const usersStore = useUsersStore()
 const user = computed(() => usersStore.userInfo)
 const friends = computed(() => usersStore.userFriendsInfo)
-const posts = computed(() => {
-  return usersStore.postsInfo
-})
+const posts = computed(() => usersStore.postsInfo)
+const isUserFeedLoading = computed(() => usersStore.postsLoading)
 
 onMounted(async () => {
   await usersStore.getUsers(props.id)
@@ -46,6 +45,7 @@ onMounted(async () => {
       <UserList
         v-show="friends.length"
         :items="friends"
+        :rows="10"
       >
       </UserList>
     </BaseCard>
@@ -58,18 +58,20 @@ onMounted(async () => {
       card-class="flex flex-col justify-start gap-6"
     >
       <template #title> Posts </template>
-      <div v-show="!posts.length">No posts available</div>
-
+      <div v-show="!(posts.length || isUserFeedLoading)">No posts available</div>
+      <div v-show="isUserFeedLoading">Loading...</div>
       <UserList
         v-show="posts.length"
         :items="posts"
+        :rows="10"
       >
         <template #default="{ item, index }">
           <div
+            v-show="!isUserFeedLoading"
             class="flex flex-col sm:items-center p-6 gap-4"
             :class="{ 'border-t border-surface-200 dark:border-surface-700': index !== 0 }"
           >
-            <span>
+            <span class="w-96">
               <img
                 v-if="item.image"
                 class="w-full inline-flex shadow-md shadow-gray-400/30 rounded-md overflow-hidden mr-4"
