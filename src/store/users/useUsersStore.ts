@@ -76,6 +76,7 @@ export const useUsersStore = defineStore('users', () => {
             sex,
             imageSrc: user.photo_100,
             born: user?.bdate,
+            usersRelatedCounter: user.friendsList?.length,
             friendsCounter: `${user.friends?.length} ${user.friends?.length > 1 ? 'friends' : 'friend'}`,
           }
         })
@@ -165,13 +166,17 @@ export const useUsersStore = defineStore('users', () => {
     async function getFriendsCountInnerFn() {
       do {
         if (!user_ids[i]) break
-
-        const [data] = await usersService.getUsers({
-          user_ids: user_ids[i],
-          fields: ['counters'],
-        })
-        i++
-        result.push(data)
+        try {
+          const data = await usersService.getUsers({
+            user_ids: user_ids[i],
+            fields: ['counters'],
+          })
+          i++
+          result.push(data?.[0])
+        } catch (error) {
+          loading.value = false
+          throw error
+        }
       } while (i % 3 !== 0 && i < user_ids.length)
 
       if (i === user_ids.length) {

@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import DataView from 'primevue/dataview'
 
-defineProps<{
-  items: any[]
-  rows: number
-}>()
+withDefaults(
+  defineProps<{
+    items: any[]
+    rows: number
+  }>(),
+  {
+    items: () => [],
+    rows: 10,
+  },
+)
 const emit = defineEmits(['change-page'])
 
 function getCurrentPage(e) {

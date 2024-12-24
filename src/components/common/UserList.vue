@@ -7,7 +7,7 @@ defineProps<{
 }>()
 
 function addBgColor(value) {
-  const num = Number(value?.split(' ')[0])
+  const num = Number(value)
 
   if (!num) {
     return {
@@ -42,7 +42,7 @@ function addBgColor(value) {
         <div
           class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"
           :class="{ 'border-t border-surface-200 dark:border-surface-700': index !== 0 }"
-          :style="addBgColor(item.friendsCounter)"
+          :style="addBgColor(item.usersRelatedCounter)"
         >
           <div class="md:w-12 relative">
             <img

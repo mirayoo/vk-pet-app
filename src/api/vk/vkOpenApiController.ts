@@ -28,13 +28,14 @@ export default class VkOpenApiController {
         },
         cb,
       ),
-    )
-      .then((data) => {
-        if (data.response) return data.response
-      })
-      .catch((error) => {
-        throw new Error(error)
-      })
+    ).then((data) => {
+      if (data.response) return data.response
+      if (data.error) {
+        const message = data.error.error_msg ?? 'Unknown error'
+
+        throw new Error(message)
+      }
+    })
   }
 }
 
