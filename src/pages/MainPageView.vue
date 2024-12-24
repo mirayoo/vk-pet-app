@@ -7,11 +7,13 @@ import { useUsersStore } from '@/store/users/useUsersStore'
 import BaseCard from '@components/layouts/BaseCard.vue'
 import Button from 'primevue/button'
 import UserList from '@components/common/UserList.vue'
+import { debounce } from '@/utils/helpers'
 
 const usersStore = useUsersStore()
 
 const inputValue = ref<string>('')
 const itemsPerPage = ref<number>(10)
+
 const users = computed(() => usersStore.usersInfo)
 const usersSelected = computed(() => {
   return usersStore.usersSelectedInfo
@@ -24,7 +26,7 @@ function getUserFriendsCount(id) {
   return (
     friendsCount.value &&
     friendsCount.value.length &&
-    friendsCount.value?.find((item) => String(item.id) === id)?.counters.friends
+    friendsCount.value.find((item) => String(item.id) === id)?.counters?.friends
   )
 }
 
@@ -52,6 +54,8 @@ async function getUsersFriends() {
   })
 }
 
+const debouncedHandePageChange = debounce(handlePageChange, 1500)
+
 async function handlePageChange(e) {
   const userIds = friends.value.map((user) => user.id)
 
@@ -59,7 +63,7 @@ async function handlePageChange(e) {
   const offset = itemsPerPage.value * page
   const step = itemsPerPage.value
 
-  await usersStore.getFriendsCount(userIds.slice(offset, offset + step))
+  return usersStore.getFriendsCount(userIds.slice(offset, offset + step))
 }
 </script>
 
@@ -117,7 +121,7 @@ async function handlePageChange(e) {
         v-show="friends.length"
         :items="friends"
         :rows="itemsPerPage"
-        @change-page="handlePageChange"
+        @change-page="debouncedHandePageChange"
       >
         <template #append="{ item }">
           <span v-show="isLoading"> loading... </span>
